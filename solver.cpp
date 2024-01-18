@@ -3,8 +3,8 @@
 #include <array>
 #include <chrono>
 #include <filesystem>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <queue>
 #include <random>
 #include <set>
@@ -14,6 +14,7 @@ using namespace std;
 // Alphabetically ordered header files :D
 
 const int states = 3674160;
+// Number of states
 
 int cube_hash(cube &c) {
     /* Hash is calculated as:
@@ -52,15 +53,11 @@ int cube_hash(cube &c) {
         }
     }
 
-    for (int i = 0; i < factoradic.size(); i++) {
-        //cout << factoradic[i] << " : ";
-        final_hash += factoradic[i] * factorials[6 - i];
-    }
-    //cout << endl;
+    for (int i = 0; i < factoradic.size(); i++) final_hash += factoradic[i] * factorials[6 - i]; //L
 
-    final_hash *= 729;
+    final_hash *= 729; // A
 
-    for (int i = 1; i < 7; i++) final_hash += c.orientations[i] * pow3[6 - i];
+    for (int i = 1; i < 7; i++) final_hash += c.orientations[i] * pow3[6 - i]; // D
 
     return final_hash;
 }
@@ -69,7 +66,7 @@ cube unhash(int hash) {
     // Generates a cube from the given hash
     // Essentially the reverse of the hash function
     // 1 to 1 correspondence so this is possible
-    //
+
 
     cube c;
     int or_sum = 0;
@@ -93,9 +90,6 @@ cube unhash(int hash) {
         factoradic.push_back(perm / factorials[7-i]);
         perm %= factorials[7-i];
     }
-
-    //for (int i = 0; i < 6; i++) cout << factoradic[i] << " : ";
-    //cout << endl;
 
     for (int i = 1; i < 7; i++) {
         int idx = 0;
@@ -134,6 +128,7 @@ void make_graph(vector<pair<int, array<int, 9>>> &graph) {
      * i.e compliment of D is D'
      * => compliment of 0 is 2
      * which is what this vector is for
+     * helps us fill the graph quicker
      *
      */
 
@@ -233,22 +228,9 @@ void solution(int hash, vector<pair<int, array<int, 9>>> &graph, string &sol_str
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 int main() {    
-
     
-    // Initializing RNG
+    // Initializing RNG to generate random cubes if necessary
     random_device rd;
     linear_congruential_engine<std::uint_fast32_t, 48271, 0, 2147483647> rng;
     rng.seed(rd());
@@ -259,48 +241,15 @@ int main() {
 
     //cube test = random_cube(rng);
     //test.draw();
-    //test.apply_move(6);
     //cout << cube_hash(test) << endl;
     //test = unhash(cube_hash(test));
     //test.draw();
-
-    //    for (int i = 0; i < 10; i++) {
-    //        test = random_cube();
-    //        test.rotate_to_wca();
-    //        test.draw();
-    //        cout << cube_hash(test) << endl;
-    //        cube test2 = unhash(cube_hash(test));
-    //        test2.draw();
-    //    }
     //
-    //    test = unhash(1);
-    //    test.draw();
-
-    //for (int j = 0; j <= 10; j++) {
-    //    cout << graph[j].first << " ";
-    //    for (int i = 0; i < 9; i++) cout << graph[j].second[i] << " ";
-    //    cout << endl;
-    //}
-
-    //vector<int> randoms;
-    //uniform_int_distribution<int> int_gen(0, 3000000);
-
-    //for (int i = 0; i < 27E6; i++) {
-    //    randoms.push_back(int_gen(rng));
-    //}
-
-    //auto start_time = chrono::high_resolution_clock::now();
-    //for (int i = 0; i < randoms.size(); i++) {
-    //    test = unhash(randoms[i]);
-    //    if (i % 100000 == 0) cout << i << endl;
-    //}
-
-    //auto end_time = chrono::high_resolution_clock::now();
-    //auto duration = chrono::duration_cast<chrono::seconds>(end_time - start_time);
-    //cout << "Graph construction complete in " << duration.count() << " seconds\n";
-
+    // sample code for random cube ^
 
     while (true) {
+        // loop to get solutions of cube given scramble
+
         cube test = solved[0];
         string scr;
         cout << "input a scramble:\n";

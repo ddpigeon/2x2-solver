@@ -1,17 +1,10 @@
-//#include <bits/stdc++.h>
-//too many headers to keep track of
-
 #ifndef CUBE_HPP
 #define CUBE_HPP
 
-
-
+#include <array>
 #include <functional>
 #include <random>
-#include <array>
-
 using namespace std;
-//Bad practice, I know
 
 
 class cube {
@@ -390,90 +383,6 @@ const cube solved[] = { //6 * 4 = 24 orientations to keep cube = 24 solved state
     { {2, 5, 4, 3, 0, 7, 6, 1}, {1, 2, 1, 2, 1, 2, 1, 2} } //G top, O front;
 };
 
-
-
-
-
-
-//void make_graph(vector<tuple<cube, array<int, 9>, uint8_t>> &graph, map<cube, int> &cube_indices) {
-//    /*
-//     * Makes the cube graph.
-//     * First entry of tuple -> the cube state
-//     * Second entry of tuple -> adjacency list (all cube states accessible by a single turn)
-//     * Third entry of tuple -> depth from solved state
-//     *
-//     * The states are generated in order of depth from solved state, 
-//     * so iterating down the array is equivalent to BFS starting from solved cube.
-//     *
-//     * in my experience takes about 9 minutes on a shitty laptop, 2013 i3
-//     * Less than 2 minutes on a 12th gen i5
-//     * Takes about 195 MB of memory
-//     *
-//     */
-//    auto start_time = chrono::high_resolution_clock::now();
-//    cube start = solved[0];
-//    int counter = 0;
-//    array<int, 9> initial;
-//    initial.fill(-1);
-//    graph.emplace_back(make_tuple(start, initial, 0));
-//    cube_indices[start] = 0;
-//    for (int i = 0; i < 3674160; i++) {
-//        for (int j = 0; j < 9; j++) {
-//            cube c = get<0>(graph[i]);
-//            apply_move(c, j);
-//            if (cube_indices.find(c) == cube_indices.end()) {
-//                graph.emplace_back(make_tuple(c, initial, get<2>(graph[i]) + 1));
-//                cube_indices[c] = ++counter;
-//                if (!(counter%10000)) cout << "Node " << counter << " has been initialized at depth "
-//                    << +get<2>(graph[counter]) << " \n";
-//            }
-//            get<1>(graph[i])[j] = cube_indices[c];
-//        }
-//        if (!((i+1)%10000)) cout << "Node " << i+1 << " has been edgified\n";
-//    }
-//    auto end_time = chrono::high_resolution_clock::now();
-//    auto duration = chrono::duration_cast<chrono::seconds>(end_time - start_time);
-//    cout << "Graph construction complete in " << duration.count() << " seconds\n";
-//    return;
-//}
-
-//void solution(cube &c, string &sol_string, vector<tuple<cube, array<int, 9>, uint8_t>> &graph, map<cube, int> &indices) {
-//    /*
-//     * Uses a bit of a property of the way the graph was generated
-//     *
-//     * move 0 = F, so the 0th element of the adjacency list is (old cube + F)
-//     * similary, 1 = F2 and so on
-//     *
-//     * so we find the first element with a depth lower than the current cube, 
-//     *  and add the corresponding move to the solution recursively.
-//     *  (at max 12 recursions of O(1) operations so doesn't take long at all)
-//     *
-//     * if depth of cube = 0, cube is solved, we are done
-//     */
-//
-//    uint8_t depth = get<2>(graph[indices[c]]);
-//    if (depth == 0) return;
-//    else {
-//        for (int i = 0; i < 9; i++) { 
-//            if (get<2>(graph[get<1>(graph[indices[c]])[i]]) == depth - 1) {
-//                //draw_cube(get<0>(graph[get<1>(graph[indices[c]])[i]]));
-//                if (i == 0) sol_string = sol_string + (string) "F ";
-//                else if (i == 1) sol_string  = sol_string + (string) "F2 ";
-//                else if (i == 2) sol_string = sol_string + (string) "F' ";
-//                else if (i == 3) sol_string = sol_string + (string) "D ";
-//                else if (i == 4) sol_string = sol_string + (string) "D2 ";
-//                else if (i == 5) sol_string = sol_string + (string) "D' " ;
-//                else if (i == 6) sol_string = sol_string + (string) "R ";
-//                else if (i == 7) sol_string = sol_string + (string) "R2 ";
-//                else if (i == 8) sol_string = sol_string + (string) "R' ";
-//                solution(get<0>(graph[get<1>(graph[indices[c]])[i]]), sol_string, graph, indices);
-//                break;
-//            }
-//        }
-//    }
-//}
-
-
 inline void replaceAll(string& str, const string& from, const string& to) {
     // function replaces all instances of a substring to another
     // code shamelessly stolen from stackoverflow
@@ -534,9 +443,13 @@ inline void str_rotate(string &sol, int orient) {
     else if (orient == 23) change("U", "F", "R");
 }
 
-inline cube random_cube(linear_congruential_engine<std::uint_fast32_t, 48271, 0, 2147483647> rng) {
+inline cube random_cube(void) {
     // generates a random cube by randomly permuting the 8 cubies, and randomly orienting 7
     // The orientation of the last cubie depends on the orientation of the other 7
+
+    random_device rd;
+    linear_congruential_engine<std::uint_fast32_t, 48271, 0, 2147483647> rng;
+    rng.seed(rd());
 
     cube c;
     c.pieces = {0, 1, 2, 3, 4, 5, 6, 7};
